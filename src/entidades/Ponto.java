@@ -1,4 +1,4 @@
-package src;
+package src.entidades;
 
 public class Ponto {
     private final int x;

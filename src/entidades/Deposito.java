@@ -1,4 +1,4 @@
-package src;
+package src.entidades;
 
 public class Deposito {
     private final Ponto localizacao;

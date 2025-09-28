@@ -1,4 +1,6 @@
-package src;
+package src.util;
+
+import src.entidades.*;
 
 public class Euclidiana implements Distancia {
     @Override

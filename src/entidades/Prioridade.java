@@ -1,4 +1,4 @@
-package src;
+package src.entidades;
 
 public enum Prioridade {
     BAIXA(1), MEDIA(2), ALTA(3);
