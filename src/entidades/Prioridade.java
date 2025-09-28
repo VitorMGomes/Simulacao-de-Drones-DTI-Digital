@@ -5,14 +5,12 @@ public enum Prioridade {
 
     private final int score;
 
-    Prioridade(int score)
-    {
+    Prioridade(int score) {
         this.score = score;
     }
 
-    public int getScore()
-    {
+    public int getScore() {
         return score;
     }
-    
+
 }

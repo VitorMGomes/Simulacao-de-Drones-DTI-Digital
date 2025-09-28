@@ -3,71 +3,94 @@ package src.estrategia;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.PriorityQueue;
 
-import src.entidades.*;
-import src.util.*;
-
+import src.entidades.Deposito;
+import src.entidades.Drone;
+import src.entidades.Pedido;
+import src.entidades.Viagem;
+import src.util.Distancia;
+import src.util.RotaDireta;
 
 public class GreedyMinTrips implements AlocacaoEstrategia {
 
     @Override
     public List<Viagem> planejar(List<Pedido> pedidos, Drone drone, Deposito base, Distancia distancia) {
-        List<Pedido> ordenados = new ArrayList<>(pedidos);
+        if (pedidos == null)
+            throw new IllegalArgumentException("Lista de pedidos nula");
+        if (drone == null)
+            throw new IllegalArgumentException("Drone nulo");
+        if (base == null)
+            throw new IllegalArgumentException("Depósito nulo");
+        if (distancia == null)
+            throw new IllegalArgumentException("Métrica de distância nula");
 
-        ordenados.sort(Comparator
-            .comparingInt((Pedido p) -> p.getPrioridade().getScore()).reversed()
-            .thenComparing((Pedido p) -> p.getPeso(), Comparator.reverseOrder())
-            .thenComparingDouble((Pedido p) -> distancia.entre(base.getLocalizacao(), p.getPonto()))
-        );
+        Comparator<Pedido> cmp = Comparator
+                .comparingInt((Pedido p) -> p.getPrioridade().getScore()).reversed()
+                .thenComparing((Pedido p) -> p.getPeso(), Comparator.reverseOrder())
+                .thenComparingDouble((Pedido p) -> distancia.entre(base.getLocalizacao(), p.getPonto()));
+
+        PriorityQueue<Pedido> fila = new PriorityQueue<>(cmp);
+        fila.addAll(pedidos);
 
         RotaDireta rota = new RotaDireta(distancia);
         List<Viagem> viagens = new ArrayList<>();
+
         List<Pedido> atual = new ArrayList<>();
         double pesoAtual = 0.0;
 
-        for (Pedido p : ordenados) {
-            boolean cabePeso = (pesoAtual + p.getPeso()) <= drone.getCapacidadeKg();
+        while (!fila.isEmpty()) {
+            Pedido p = fila.poll();
 
-            if (cabePeso) {
-                // testa alcance se eu incluir p
-                RotaDireta.PassoAtual passo = new RotaDireta.PassoAtual(atual);
-                double distSeIncluir = rota.calcularCom(passo, p, base);
-                boolean cabeAlcance = distSeIncluir <= drone.getAlcanceKm();
+            boolean cabePorPeso = (pesoAtual + p.getPeso()) <= drone.getCapacidadeKg();
+            if (cabePorPeso) {
 
-                if (cabeAlcance) {
+                double distSeIncluir = rota.calcularCom(new RotaDireta.PassoAtual(atual), p, base);
+
+                boolean cabePorAlcance = drone.suportaRota(distSeIncluir);
+                boolean cabePorBateria = drone.suportaRotaPorBateria(distSeIncluir);
+
+                if (cabePorAlcance && cabePorBateria) {
                     atual.add(p);
                     pesoAtual += p.getPeso();
                     continue;
                 }
             }
 
-            // não coube (peso ou alcance) → fecha viagem atual, se houver
             if (!atual.isEmpty()) {
-                double dist = rota.calcular(base, atual);
-                viagens.add(new Viagem(drone.getId(), atual, dist));
-                atual = new ArrayList<>();
+                double distViagem = rota.calcular(base, atual);
+                drone.consumirBateria(distViagem);
+                viagens.add(new Viagem(drone.getId(), new ArrayList<>(atual), distViagem));
+
+                drone.recarregarTotalNaBase();
+
+                atual.clear();
                 pesoAtual = 0.0;
             }
 
-            // tenta abrir nova viagem com p (se ainda não coube por alcance/peso sozinha, rejeita)
-            List<Pedido> soP = new ArrayList<>();
-            soP.add(p);
-            double distSoP = rota.calcular(base, soP);
+            List<Pedido> somenteP = new ArrayList<>(1);
+            somenteP.add(p);
+            double distSoP = rota.calcular(base, somenteP);
 
-            if (p.getPeso() <= drone.getCapacidadeKg() && distSoP <= drone.getAlcanceKm()) {
+            boolean cabeSozinhoPeso = p.getPeso() <= drone.getCapacidadeKg();
+            boolean cabeSozinhoAlcance = drone.suportaRota(distSoP);
+            boolean cabeSozinhoBateria = drone.suportaRotaPorBateria(distSoP);
+
+            if (cabeSozinhoPeso && cabeSozinhoAlcance && cabeSozinhoBateria) {
                 atual.add(p);
                 pesoAtual = p.getPeso();
             } else {
-                // pedido impossível com as restrições → aqui você pode:
-                // (a) ignorar e logar uma msg; (b) lançar exceção; (c) acumular numa lista de rejeitados.
-                throw new IllegalArgumentException("Pedido " + p.getId() + " não cabe em nenhuma viagem (capacidade/alcance).");
+                throw new IllegalArgumentException(
+                        "Pedido " + p.getId() + " não cabe em nenhuma viagem (capacidade/alcance/bateria).");
             }
         }
 
-        // fecha a última
         if (!atual.isEmpty()) {
-            double dist = rota.calcular(base, atual);
-            viagens.add(new Viagem(drone.getId(), atual, dist));
+            double distViagem = rota.calcular(base, atual);
+            drone.consumirBateria(distViagem);
+            viagens.add(new Viagem(drone.getId(), new ArrayList<>(atual), distViagem));
+
+            drone.recarregarTotalNaBase();
         }
 
         return viagens;

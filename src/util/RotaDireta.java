@@ -8,7 +8,9 @@ import src.entidades.*;
 public class RotaDireta {
     private final Distancia dist;
 
-    public RotaDireta(Distancia dist) { this.dist = dist; }
+    public RotaDireta(Distancia dist) {
+        this.dist = dist;
+    }
 
     public double calcular(Deposito base, List<Pedido> pedidos) {
         double total = 0.0;
@@ -21,7 +23,6 @@ public class RotaDireta {
         return total;
     }
 
-    // helper pra estimar rota se eu incluir mais um pedido no fim
     public double calcularCom(PassoAtual passo, Pedido novo, Deposito base) {
         List<Pedido> tmp = new ArrayList<>(passo.pedidos);
         tmp.add(novo);
@@ -30,6 +31,9 @@ public class RotaDireta {
 
     public static final class PassoAtual {
         public final List<Pedido> pedidos;
-        public PassoAtual(List<Pedido> pedidos){ this.pedidos = pedidos; }
+
+        public PassoAtual(List<Pedido> pedidos) {
+            this.pedidos = pedidos;
+        }
     }
 }

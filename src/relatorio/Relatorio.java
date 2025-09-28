@@ -9,15 +9,13 @@ import src.entidades.*;
 
 public class Relatorio {
 
-    public static void imprimir(List<Viagem> viagens) {
+    public static void imprimir(List<Viagem> viagens, Drone drone) {
         System.out.println("===== RELATÓRIO =====");
 
-        // Detalhe de cada viagem (usa o toString() multilinhas da Viagem)
         for (Viagem v : viagens) {
             System.out.println(v);
         }
 
-        // Métricas agregadas
         double distanciaTotal = somaDistancia(viagens);
         double pesoTotal = somaPeso(viagens);
         int totalPedidos = viagens.stream().mapToInt(v -> v.getPedidos().size()).sum();
@@ -31,7 +29,11 @@ public class Relatorio {
         System.out.println("Distância média por viagem: " + mediaDist + " km");
         System.out.println("Peso total transportado: " + String.format("%.2f", pesoTotal) + " kg");
 
-        // Viagem mais longa e com mais pedidos
+        if (drone != null && drone.getBateria() != null) {
+            double pct = 100.0 * drone.getBateria().getCargaWh() / drone.getBateria().getCapacidadeWh();
+            System.out.println("Bateria restante do Drone #" + drone.getId() + ": " + String.format("%.0f%%", pct));
+        }
+
         Viagem maisLonga = viagens.stream()
                 .max(Comparator.comparingDouble(Viagem::getDistanciaKm))
                 .orElse(null);
@@ -56,19 +58,19 @@ public class Relatorio {
                 "MEDIA=" + porPrioridade.getOrDefault(Prioridade.MEDIA, 0) + " | " +
                 "BAIXA=" + porPrioridade.getOrDefault(Prioridade.BAIXA, 0));
 
-        // Opcional: mapa ASCII (descomente para usar)
-        // imprimirMapaAscii(viagens, new Deposito(), 12, 12);
     }
 
     private static double somaDistancia(List<Viagem> viagens) {
         double s = 0.0;
-        for (Viagem v : viagens) s += v.getDistanciaKm();
+        for (Viagem v : viagens)
+            s += v.getDistanciaKm();
         return s;
     }
 
     private static double somaPeso(List<Viagem> viagens) {
         double s = 0.0;
-        for (Viagem v : viagens) s += v.getPesoTotal();
+        for (Viagem v : viagens)
+            s += v.getPesoTotal();
         return s;
     }
 
@@ -83,44 +85,39 @@ public class Relatorio {
     }
 
     public static void imprimirMapaAscii(List<Viagem> viagens, Deposito base, int width, int height) {
-    char[][] grid = new char[height][width];
+        char[][] grid = new char[height][width];
 
-    // preenche grade com '.'
-    for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++) {
-            grid[y][x] = '.';
-        }
-    }
-
-    // marca depósito em (0,0) se couber no grid
-    int bx = base.getLocalizacao().getX();
-    int by = base.getLocalizacao().getY();
-    if (bx >= 0 && by >= 0 && bx < width && by < height) {
-        grid[height - 1 - by][bx] = 'D';
-    }
-
-    // marca pedidos com base na prioridade
-    for (Viagem v : viagens) {
-        for (Pedido p : v.getPedidos()) {
-            int px = p.getPonto().getX();
-            int py = p.getPonto().getY();
-            if (px >= 0 && py >= 0 && px < width && py < height) {
-                char marker = switch (p.getPrioridade()) {
-                    case ALTA -> 'A';
-                    case MEDIA -> 'M';
-                    case BAIXA -> 'B';
-                };
-                grid[height - 1 - py][px] = marker;
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                grid[y][x] = '.';
             }
         }
+
+        int bx = base.getLocalizacao().getX();
+        int by = base.getLocalizacao().getY();
+        if (bx >= 0 && by >= 0 && bx < width && by < height) {
+            grid[height - 1 - by][bx] = 'D';
+        }
+
+        for (Viagem v : viagens) {
+            for (Pedido p : v.getPedidos()) {
+                int px = p.getPonto().getX();
+                int py = p.getPonto().getY();
+                if (px >= 0 && py >= 0 && px < width && py < height) {
+                    char marker = switch (p.getPrioridade()) {
+                        case ALTA -> 'A';
+                        case MEDIA -> 'M';
+                        case BAIXA -> 'B';
+                    };
+                    grid[height - 1 - py][px] = marker;
+                }
+            }
+        }
+
+        System.out.println("Mapa das entregas:");
+        for (int y = 0; y < height; y++) {
+            System.out.println(new String(grid[y]));
+        }
     }
 
-    // imprime linha por linha
-    System.out.println("Mapa das entregas:");
-    for (int y = 0; y < height; y++) {
-        System.out.println(new String(grid[y]));
-    }
-}
-
-    
 }

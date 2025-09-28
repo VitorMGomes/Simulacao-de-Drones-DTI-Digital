@@ -4,16 +4,19 @@ public class Drone {
     private final int id;
     private final double capacidade;
     private final double alcance;
+    private final Bateria bateria;
 
-
-    public Drone(int id, double capacidade, double alcance)
-    {
-        if(capacidade <= 0) throw new IllegalArgumentException("Valor impossivel para capacidade");
-        if(alcance <= 0) throw new IllegalArgumentException("Valor impossivel para alcance");
-
+    public Drone(int id, double capacidade, double alcance, Bateria bateria) {
+        if (capacidade <= 0)
+            throw new IllegalArgumentException("Capacidade (kg) deve ser > 0");
+        if (alcance <= 0)
+            throw new IllegalArgumentException("Alcance (km) deve ser > 0");
+        if (bateria == null)
+            throw new IllegalArgumentException("Bateria não pode ser nula");
         this.id = id;
         this.capacidade = capacidade;
         this.alcance = alcance;
+        this.bateria = bateria;
     }
 
     public int getId() {
@@ -28,7 +31,6 @@ public class Drone {
         return alcance;
     }
 
-
     public boolean suportaPeso(double pesoKg) {
         return pesoKg <= capacidade;
     }
@@ -37,12 +39,27 @@ public class Drone {
         return distanciaKm <= alcance;
     }
 
+    public boolean suportaRotaPorBateria(double distanciaKm) {
+        return bateria.suportaDistancia(distanciaKm);
+    }
+
+    public void consumirBateria(double distanciaKm) {
+        bateria.consumir(distanciaKm);
+    }
+
+    public int recarregarTotalNaBase() {
+        return bateria.recarregarAteCheio();
+    }
+
+    public Bateria getBateria() {
+        return bateria;
+    }
 
     @Override
     public String toString() {
-        String resp = "ID = " + id
-                    + " | Capacidade = " + capacidade + "kg"
-                    + " | Alcance = " + alcance + "km";
-        return resp;
+        return "Drone #" + id +
+                " | Capacidade=" + capacidade + "kg" +
+                " | Alcance=" + alcance + "km" +
+                " | Bateria=" + String.format("%.0f/%.0f Wh", bateria.getCargaWh(), bateria.getCapacidadeWh());
     }
 }

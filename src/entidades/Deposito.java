@@ -2,13 +2,14 @@ package src.entidades;
 
 public class Deposito {
     private final Ponto localizacao;
-    
+
     public Deposito() {
         this.localizacao = new Ponto(0, 0);
     }
 
     public Deposito(Ponto localizacao) {
-        if (localizacao == null) throw new IllegalArgumentException("localizacao nula");
+        if (localizacao == null)
+            throw new IllegalArgumentException("localizacao nula");
         this.localizacao = localizacao;
     }
 
@@ -25,6 +26,5 @@ public class Deposito {
         String resp = "Depósito | Localização = " + localizacao;
         return resp;
     }
-
 
 }
