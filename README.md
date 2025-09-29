@@ -147,5 +147,7 @@ Durante o desenvolvimento, utilizei ferramentas de **Inteligência Artificial (I
    - A IA auxiliou na organização do README e na escrita de explicações mais claras sobre o funcionamento do projeto e as decisões de design.  
 
 7. **Aprendizado contínuo:**  
-   - Usei a IA como recurso de aprendizado, consolidando conceitos de algoritmos e estruturas de dados já estudados na graduação.  
+   - Usei a IA como recurso de aprendizado, consolidando conceitos de algoritmos e estruturas de dados já estudados na graduação.
 
+8. **Revisar textos:**  
+   - Utilizei IA para revisar textos, além de aumentar a coesão dos mesmos. 
