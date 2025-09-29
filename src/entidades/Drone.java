@@ -19,6 +19,8 @@ public class Drone {
         this.bateria = bateria;
     }
 
+    //drone possui bateria, capacidade e alcance, portanto ele tera metodos que validem se eles conseguem suportar o peso pra viagem, se tem alcance, se tem bateria pra rota e controle da propria bateria
+
     public int getId() {
         return id;
     }

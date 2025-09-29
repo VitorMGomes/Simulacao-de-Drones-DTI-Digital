@@ -6,6 +6,8 @@ public class Pedido {
     private final double peso;
     private final Prioridade prioridade;
 
+    //pedido tem os dados dele e os getters
+
     public Pedido(int id, Ponto posicao, double peso, Prioridade prioridade) {
         this.id = id;
 

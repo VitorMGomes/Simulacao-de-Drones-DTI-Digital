@@ -1,6 +1,6 @@
 package src.entidades;
 
-public enum Prioridade {
+public enum Prioridade { //nao sabia que existia tipo enum, mas gostei
     BAIXA(1), MEDIA(2), ALTA(3);
 
     private final int score;

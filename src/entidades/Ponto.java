@@ -37,6 +37,7 @@ public class Ponto {
         return resp;
     }
 
+    //cada Ponto com coordenadas diferentes tera um hash unico, pode haver colisao de hash. Nao entendi muito bem por que usar mas o gpt sugeriu e falou que poderia ser importante para comparar objetos iguais
     @Override
     public int hashCode() {
         return 31 * x + y;

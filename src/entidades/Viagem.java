@@ -9,6 +9,11 @@ public class Viagem {
 
     public Viagem(int droneId, List<Pedido> pedidos, double distanciaKm) {
         this.droneId = droneId;
+        
+        // Cria uma cópia da lista recebida para garantir encapsulamento.
+        // Em seguida, torna essa cópia imutável com Collections.unmodifiableList,
+        // impedindo alterações externas após a criação da Viagem.
+        // Assim, evitamos efeitos colaterais e garantimos consistência dos dados.
         this.pedidos = Collections.unmodifiableList(new ArrayList<>(pedidos)); // ideia do GPT
         this.distanciaKm = distanciaKm;
     }

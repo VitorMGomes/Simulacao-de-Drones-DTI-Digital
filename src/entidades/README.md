@@ -1,3 +1,9 @@
+# O que aprendi implementando as entidades?
+
+- `Tipo enum`: eu não conhecia a existencia do tipo enum para enumeração, sempre usei int para filas de prioridade
+- `Uso do HashMap`: eu nunca havia usado o hash fora dos trabalhos da faculdade, então foi minha primeira vez 
+- `Uso de metodos nativos`: uso de métodos como *unmodifiableList*, que eu nunca havia usado, além de outros metódos nativos do java que eu não estava acostumado a usar.
+
 # Entidades
 
 ### Bateria
