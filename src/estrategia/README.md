@@ -1,4 +1,4 @@
-# O que aprendi implementando as entidades?
+# O que aprendi implementando as Estratégias de resolução?
 
 - `Uso do .sort`: Eu ja conecia a utilização do método .sort porém nunca havia aprendido usar com critérios de desempate para a ordenação.
 
