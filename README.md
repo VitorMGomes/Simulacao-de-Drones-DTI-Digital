@@ -12,18 +12,13 @@ O projeto implementa uma estratégia **gulosa** (`GreedyMinTrips`) que utiliza f
 ---
 
 ## 📂 Estrutura do Projeto
-```
-src/
- ├── entidades/    (Drone, Pedido, Bateria, Prioridade, Ponto, Deposito, Viagem)
- ├── estrategia/   (AlocacaoEstrategia, GreedyMinTrips)
- ├── relatorio/    (Relatorio – geração de relatório e mapa ASCII)
- ├── util/         (Distancia, Euclidiana, RotaDireta)
- └── principal/    (Main, MainCsv, Testes)
 
-data/
- ├── config.csv
- └── pedidos.csv
-```
+- `src/entidades/` → Classes de domínio (Pedido, Drone, Depósito, etc.)
+- `src/estrategia/` → Estratégias de alocação de pedidos (ex: GreedyMinTrips)
+- `src/relatorio/` → Geração de relatórios
+- `src/principal/` → Pontos de entrada (Main, MainCsv, Testes)
+- `data/` → Arquivos de configuração e pedidos em CSV
+
 
 ---
 
